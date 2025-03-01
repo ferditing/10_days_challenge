@@ -44,7 +44,7 @@ const Pomodoro = () => {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 text-center">
+    <div className="bg-white dark-bg-black dark-text-white shadow-md rounded-lg p-6 text-center">
       <h2 className="text-2xl font-bold mb-4">
         {isWork ? 'Work Time' : 'Break Time'}
       </h2>

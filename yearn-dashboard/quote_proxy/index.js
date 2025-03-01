@@ -1,11 +1,20 @@
-const fetchQuote = async () => {
-    try {
-      const response = await fetch("http://localhost:5000/api/quote");
-      const data = await response.json();
-      setQuote(data[0].q);      // ZenQuotes uses data[0].q for quote text
-      setAuthor(data[0].a);     // ZenQuotes uses data[0].a for author
-    } catch (error) {
-      console.error("Error fetching quote:", error);
-    }
-  };
-  
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+
+app.get("/api/quote", async (req, res) => {
+  try {
+    const response = await axios.get("https://zenquotes.io/api/random");
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching quote" });
+  }
+});
+
+const PORT = 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});

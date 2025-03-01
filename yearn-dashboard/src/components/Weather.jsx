@@ -30,7 +30,7 @@ const Weather = () => {
   };
 
   return (
-    <div className="bg-blue-500 text-white rounded-lg p-6 shadow-md w-full max-w-md mx-auto">
+    <div className="bg-blue-500  rounded-lg p-6 shadow-md w-full max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-center">Weather in {city}</h2>
       <form onSubmit={handleSearch} className="mb-4 text-center">
         <input
