@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+// /src/components/TodoList.jsx
+import React, { useState, useEffect, useContext } from 'react';
+import { ProductivityContext } from './ProductivityContext';
 
 function TodoList() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
+  
+  // Get productivity context values
+  const { hasCompletedToday, setHasCompletedToday } = useContext(ProductivityContext);
 
   // Load tasks from localStorage on component mount
   useEffect(() => {
@@ -25,12 +30,17 @@ function TodoList() {
     }
   };
 
-  // Toggle task completion
+  // Toggle task completion and update productivity context
   const toggleTask = (index) => {
     const updatedTasks = tasks.map((task, i) =>
       i === index ? { ...task, completed: !task.completed } : task
     );
     setTasks(updatedTasks);
+
+    // If at least one task is completed and today's productivity hasn't been recorded yet, update it
+    if (!hasCompletedToday && updatedTasks.some(task => task.completed)) {
+      setHasCompletedToday(true);
+    }
   };
 
   // Delete a task
@@ -40,7 +50,7 @@ function TodoList() {
   };
 
   return (
-    <div className="p-5 bg-gray-100 rounded-lg shadow-md max-w-md mx-auto">
+    <div className="p-5 bg-gray-100 dark:bg-black rounded-lg shadow-md max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4">To-Do List</h2>
       <div className="flex mb-4">
         <input
@@ -53,7 +63,6 @@ function TodoList() {
         <button
           onClick={addTask}
           className="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
-
         >
           Add
         </button>
