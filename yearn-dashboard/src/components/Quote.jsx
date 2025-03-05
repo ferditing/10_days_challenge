@@ -7,13 +7,12 @@ const Quote = () => {
   const [author, setAuthor] = useState('');
   const [error, setError] = useState(null);
 
-  // Use environment variable for the backend proxy URL
-  const apiUrl = import.meta.env.VITE_QUOTE_API_URL;
-
   const fetchQuote = async () => {
     try {
-      const response = await axios.get(apiUrl);
-      // Assuming your backend returns an array with one object that has "q" and "a" keys:
+      // Directly call ZenQuotes API
+      const response = await axios.get('https://zenquotes.io/api/random');
+      // Assume response.data is an array with an object that contains:
+      // q: the quote, and a: the author.
       const data = response.data[0];
       setQuote(data.q);
       setAuthor(data.a);
@@ -30,12 +29,13 @@ const Quote = () => {
     const today = new Date().toDateString();
     const storedDate = localStorage.getItem('quoteDate');
     if (storedDate === today) {
+      // Use the cached quote if it's been fetched today
       setQuote(localStorage.getItem('quote'));
       setAuthor(localStorage.getItem('author'));
     } else {
       fetchQuote();
     }
-  }, [apiUrl]);
+  }, []);
 
   return (
     <div className="bg-yellow-100 dark:bg-yellow-700 text-gray-800 dark:text-gray-200 rounded-lg p-6 shadow-md w-full max-w-md mx-auto mt-4">
