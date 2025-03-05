@@ -3,13 +3,12 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBxpVNGkRZ57n6YtrqYAXqp-2b5-mIY2q4",
-  authDomain: "daychallenge-412be.firebaseapp.com",
-  projectId: "daychallenge-412be",
-  storageBucket: "daychallenge-412be.firebasestorage.app",
-  messagingSenderId: "42750912789",
-  appId: "1:42750912789:web:2a6ab81b450e2e8a1d611c",
-  measurementId: "G-XG0CB58DQQ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

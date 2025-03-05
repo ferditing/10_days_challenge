@@ -1,3 +1,4 @@
+// index.js (or your main file)
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -14,7 +15,8 @@ app.get("/api/quote", async (req, res) => {
   }
 });
 
-const PORT = 5000;
+// Use process.env.PORT for Heroku, fallback to 5000 locally.
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

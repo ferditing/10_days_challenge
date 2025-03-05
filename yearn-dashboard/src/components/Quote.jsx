@@ -1,82 +1,54 @@
-// src/components/Quote.jsx
-import { useState, useEffect } from "react";
+// /src/components/Quote.jsx
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Quote = () => {
-  const [quote, setQuote] = useState("");
-  const [author, setAuthor] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [quote, setQuote] = useState('');
+  const [author, setAuthor] = useState('');
+  const [error, setError] = useState(null);
 
-  // Helper function to get the current date as YYYY-MM-DD
-  const getCurrentDate = () => {
-    const date = new Date();
-    return date.toISOString().split("T")[0];
-  };
-
-  // Check localStorage for a saved quote and date
-  const loadStoredQuote = () => {
-    const savedQuote = localStorage.getItem("quote");
-    const savedAuthor = localStorage.getItem("author");
-    const savedDate = localStorage.getItem("quoteDate");
-
-    if (savedQuote && savedAuthor && savedDate === getCurrentDate()) {
-      setQuote(savedQuote);
-      setAuthor(savedAuthor);
-      setLoading(false);
-      return true;
-    }
-    return false;
-  };
+  // Use environment variable for the backend proxy URL
+  const apiUrl = import.meta.env.VITE_QUOTE_API_URL;
 
   const fetchQuote = async () => {
-    setLoading(true);
-    setError("");
     try {
-      const response = await fetch("http://localhost:5000/api/quote");
-      if (!response.ok) throw new Error("Network response was not ok");
-      const data = await response.json();
-      const newQuote = data[0].q;
-      const newAuthor = data[0].a;
-
-      // Save the quote and the date in localStorage
-      localStorage.setItem("quote", newQuote);
-      localStorage.setItem("author", newAuthor);
-      localStorage.setItem("quoteDate", getCurrentDate());
-
-      setQuote(newQuote);
-      setAuthor(newAuthor);
+      const response = await axios.get(apiUrl);
+      // Assuming your backend returns an array with one object that has "q" and "a" keys:
+      const data = response.data[0];
+      setQuote(data.q);
+      setAuthor(data.a);
+      localStorage.setItem('quote', data.q);
+      localStorage.setItem('author', data.a);
+      localStorage.setItem('quoteDate', new Date().toDateString());
     } catch (err) {
-      console.error("Error fetching quote:", err);
-      setError("Failed to load quote. Try again later.");
-    } finally {
-      setLoading(false);
+      console.error('Error fetching quote:', err);
+      setError('Failed to fetch quote');
     }
   };
 
   useEffect(() => {
-    // Load the stored quote if it's from today, otherwise fetch a new one
-    if (!loadStoredQuote()) {
+    const today = new Date().toDateString();
+    const storedDate = localStorage.getItem('quoteDate');
+    if (storedDate === today) {
+      setQuote(localStorage.getItem('quote'));
+      setAuthor(localStorage.getItem('author'));
+    } else {
       fetchQuote();
     }
-  }, []);
+  }, [apiUrl]);
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-6 text-center max-w-md mx-auto">
-      {loading ? (
-        <p className="text-gray-500">Loading...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : (
+    <div className="bg-yellow-100 dark:bg-yellow-700 text-gray-800 dark:text-gray-200 rounded-lg p-6 shadow-md w-full max-w-md mx-auto mt-4">
+      <h2 className="text-2xl font-bold mb-4 text-center">Motivational Quote</h2>
+      {error ? (
+        <p className="text-center text-red-500">{error}</p>
+      ) : quote ? (
         <>
-          <p className="text-xl font-semibold mb-4">"{quote}"</p>
-          <p className="text-gray-600 text-sm">- {author}</p>
-          <button
-            onClick={fetchQuote}
-            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-xl hover:bg-blue-600 transition"
-          >
-            New Quote
-          </button>
+          <p className="text-lg italic text-center">"{quote}"</p>
+          <p className="text-right mt-2">- {author}</p>
         </>
+      ) : (
+        <p className="text-center">Loading...</p>
       )}
     </div>
   );
